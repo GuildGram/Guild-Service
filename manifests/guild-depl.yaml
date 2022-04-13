@@ -1,30 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: character-depl
+  name: guild-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: character
+      app: guild
   template:
     metadata:
       labels:
-        app: character
+        app: guild
     spec:
       containers:
-        - name: character
-          image: 425409/characterservice:main
+        - name: guild
+          image: 425409/guildservice:main
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: character-srv
+  name: guild-srv
 spec:
   selector:
-    app: character
+    app: guild
   ports:
-    - name: character
+    - name: guild
       protocol: TCP
-      port: 9090
-      targetPort: 9090
+      port: 9091
+      targetPort: 9091
