@@ -9,15 +9,15 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Character struct {
+type Guild struct {
 	l *log.Logger
 }
 
-func NewCharacter(l *log.Logger) *Character {
-	return &Character{l}
+func NewGuild(l *log.Logger) *Guild {
+	return &Guild{l}
 }
 
-func (c *Character) UpdateCharacters(rw http.ResponseWriter, r *http.Request) {
+func (c *Guild) UpdateGuild(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -25,15 +25,15 @@ func (c *Character) UpdateCharacters(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c.l.Println("HANDLE PUT CHARACTER", id)
+	c.l.Println("HANDLE PUT GUILD", id)
 
-	char := &data.Character{}
+	char := &data.Guild{}
 	err = char.FromJSON(r.Body)
 	if err != nil {
 		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
 	}
 
-	err = data.UpdateCharacter(id, char)
+	err = data.UpdateGuild(id, char)
 	if err == data.ErrCharNotFound {
 		http.Error(rw, "Char not found", http.StatusNotFound)
 	}
@@ -42,28 +42,28 @@ func (c *Character) UpdateCharacters(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (c *Character) GetCharacters(rw http.ResponseWriter, h *http.Request) {
-	c.l.Println("HANDLE GET CHARACTERS")
-	listChars := data.GetCharacters()
+func (c *Guild) GetGuilds(rw http.ResponseWriter, h *http.Request) {
+	c.l.Println("HANDLE GET GUILDS")
+	listChars := data.GetGuilds()
 	err := listChars.ToJSON(rw)
 	if err != nil {
 		http.Error(rw, "Unable to Marshal Json", http.StatusInternalServerError)
 	}
 }
 
-func (c *Character) AddCharacter(rw http.ResponseWriter, r *http.Request) {
-	c.l.Println("HANDLE POST CHARACTER")
+func (c *Guild) AddGuild(rw http.ResponseWriter, r *http.Request) {
+	c.l.Println("HANDLE POST GUILD")
 
-	char := &data.Character{}
+	char := &data.Guild{}
 	err := char.FromJSON(r.Body)
 	if err != nil {
 		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
 	}
 
-	data.AddCharacter(char)
+	data.AddGuild(char)
 }
 
-func (c *Character) DeleteCharacter(rw http.ResponseWriter, r *http.Request) {
+func (c *Guild) DeleteGuild(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -71,15 +71,15 @@ func (c *Character) DeleteCharacter(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c.l.Println("HANDLE DELETE CHARACTER", id)
+	c.l.Println("HANDLE DELETE GUILD", id)
 
-	err = data.DeleteCharacter(id)
+	err = data.DeleteGuild(id)
 	if err != nil {
 		http.Error(rw, "Char not found", http.StatusInternalServerError)
 	}
 }
 
-func (c *Character) GetCharacter(rw http.ResponseWriter, r *http.Request) {
+func (c *Guild) GetGuild(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -87,9 +87,9 @@ func (c *Character) GetCharacter(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c.l.Println("HANDLE GET 1 CHARACTER", id)
+	c.l.Println("HANDLE GET 1 GUILD	", id)
 
-	char, err2 := data.GetCharacter(id)
+	char, err2 := data.GetGuild(id)
 	if err2 != nil {
 		http.Error(rw, "Char not found", http.StatusInternalServerError)
 	}
