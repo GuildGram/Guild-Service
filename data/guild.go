@@ -7,7 +7,24 @@ import (
 )
 
 type Guild struct {
-	OwnerID int `json:"userid"`
+	OwnerID     int         `json:"userid"`
+	GuildID     string      `json:"guildid"`
+	GuildOwner  int         `json:"guildowner"`
+	Roster      []Character `json:"roster"`
+	Bio         string      `json:"bio"`
+	Progression string      `json:"progression"`
+}
+
+type Character struct {
+	UserID           int    `json:"userid"`
+	Class            string `json:"class"`
+	CharaterName     string `json:"name"`
+	RegionServerName string `json:"region-server"`
+	CharacterLevel   int    `json:"characterlevel"`
+	RosterLevel      int    `json:"rosterLevel"`
+	Ilvl             int    `json:"ilvl"`
+	GuildName        string `json:"guildName"`
+	GuildRole        string `json:"guildRole"`
 }
 
 func (c *Guild) FromJSON(r io.Reader) error {
@@ -42,7 +59,7 @@ func UpdateGuild(id int, c *Guild) error {
 	return err
 }
 
-var ErrCharNotFound = fmt.Errorf("Char Not found")
+var ErrCharNotFound = fmt.Errorf("char Not found")
 
 func findChar(id int) (*Guild, int, error) {
 	for i, c := range guildList {
@@ -76,8 +93,35 @@ func GetGuild(id int) (*Guild, error) {
 	return guildList[pos], err
 }
 
+func AddRosterInfo(id int, c *Character) {
+	for i, g := range guildList {
+		if g.GuildOwner == id {
+			g.Roster = append(g.Roster, *c)
+		}
+		_ = i
+	}
+
+}
+
 var guildList = []*Guild{
 	&Guild{
-		OwnerID: 1,
+		OwnerID:    1,
+		GuildID:    "G1",
+		GuildOwner: 1,
+		Roster: []Character{
+			Character{
+				UserID:           1,
+				CharaterName:     "Nemoi",
+				Class:            "Striker",
+				RegionServerName: "EUC-Sceptrum",
+				CharacterLevel:   53,
+				RosterLevel:      68,
+				Ilvl:             1355,
+				GuildName:        "FontysICT",
+				GuildRole:        "Owner",
+			},
+		},
+		Bio:         "lorem ipsum dolores",
+		Progression: "ABC:1",
 	},
 }

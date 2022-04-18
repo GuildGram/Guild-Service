@@ -9,10 +9,14 @@ import (
 	"time"
 
 	"github.com/GuildGram/Character-Service.git/handlers"
+
 	"github.com/gorilla/mux"
 )
 
 func main() {
+	handlers.StartMsgBrokerConnection()
+
+	//old code
 	l := log.New(os.Stdout, "guild-api", log.LstdFlags)
 
 	ch := handlers.NewGuild(l)
