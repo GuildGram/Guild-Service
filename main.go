@@ -9,38 +9,41 @@ import (
 	"time"
 
 	"github.com/GuildGram/Character-Service.git/handlers"
+
 	"github.com/gorilla/mux"
 )
 
 func main() {
-	l := log.New(os.Stdout, "character-api", log.LstdFlags)
+	//old code
+	l := log.New(os.Stdout, "guild-api", log.LstdFlags)
 
-	ch := handlers.NewCharacter(l)
+	ch := handlers.NewGuild(l)
 
 	sm := mux.NewRouter()
 
 	//handle get
 	getRouter := sm.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/characters/getall", ch.GetCharacters)
+	getRouter.HandleFunc("/guilds/getall", ch.GetGuilds)
+	getRouter.HandleFunc("/guilds/addchar{id:[0-9]+}", ch.AddCharToRoster)
 
 	//should change to get by name for when user services are implemented
-	getRouter.HandleFunc("/characters/get{id:[0-9]+}", ch.GetCharacter)
+	getRouter.HandleFunc("/guilds/get{id:[0-9]+}", ch.GetGuild)
 
 	//handle put
 	putRouter := sm.Methods(http.MethodPut).Subrouter()
-	putRouter.HandleFunc("/characters/update{id:[0-9]+}", ch.UpdateCharacters)
+	putRouter.HandleFunc("/guilds/update{id:[0-9]+}", ch.UpdateGuild)
 
 	//handle add
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/characters/add", ch.AddCharacter)
+	postRouter.HandleFunc("/guilds/add", ch.AddGuild)
 
 	//handle delete
 	deleteRouter := sm.Methods(http.MethodDelete).Subrouter()
-	deleteRouter.HandleFunc("/characters/delete{id:[0-9]+}", ch.DeleteCharacter)
+	deleteRouter.HandleFunc("/guilds/delete{id:[0-9]+}", ch.DeleteGuild)
 
 	//Server stuff for testing, will be deleted soon
 	s := &http.Server{
-		Addr:         ":9090",
+		Addr:         ":9091",
 		Handler:      sm,
 		IdleTimeout:  120 * time.Second,
 		ReadTimeout:  1 * time.Second,
