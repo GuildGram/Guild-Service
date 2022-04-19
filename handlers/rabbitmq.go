@@ -3,55 +3,76 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"strconv"
 
 	"github.com/GuildGram/Character-Service.git/data"
 	"github.com/streadway/amqp"
 )
 
-func StartMsgBrokerConnection() {
+//method for repeated code
+func failOnError(err error, msg string) {
+	if err != nil {
+		log.Fatalf("%s: %s", msg, err)
+	}
+}
+
+func StartMsgBrokerConnection(n int) (res *data.Character, err error) {
 
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
-	if err != nil {
-		fmt.Println(err)
-		panic(err)
-	}
+	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
 	ch, err := conn.Channel()
-	if err != nil {
-		fmt.Println(err)
-		panic(err)
-	}
+	failOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
-	msgs, err := ch.Consume(
-		"TestQ",
-		"",
-		true,
-		false,
-		false,
-		false,
-		nil,
+	q, err := ch.QueueDeclare(
+		"guild_rpc", // name
+		false,       // durable
+		false,       // delete when unused
+		false,       // exclusive
+		false,       // no-wait
+		nil,         // arguments
 	)
+	failOnError(err, "Failed to declare a queue")
 
-	forever := make(chan bool)
-	go func() {
-		for d := range msgs {
-			var body data.Character
-			err := json.Unmarshal(d.Body, &body)
-			if err != nil {
-				fmt.Println("failed to receive json msg")
-			}
+	msgs, err := ch.Consume(
+		q.Name, // queue
+		"",     // consumer
+		true,   // auto-ack
+		false,  // exclusive
+		false,  // no-local
+		false,  // no-wait
+		nil,    // args
+	)
+	failOnError(err, "Failed to register a consumer")
 
-			fmt.Println(body)
-			//do something with json data
+	corrId := "getall"
+	err = ch.Publish(
+		"",          // exchange
+		"guild_rpc", // routing key
+		false,       // mandatory
+		false,       // immediate
+		amqp.Publishing{
+			ContentType:   "text/plain",
+			CorrelationId: corrId,
+			ReplyTo:       q.Name,
+			Body:          []byte(strconv.Itoa(n)),
+		})
+	failOnError(err, "Failed to publish a message")
 
-			data.AddRosterInfo(body.UserID, &body)
-			fmt.Println(data.GetGuild(1))
+	for d := range msgs {
+		if corrId == d.CorrelationId {
+
+			var res data.Character
+			err = json.Unmarshal(d.Body, &res)
+			data.AddRosterInfo(&res)
+			failOnError(err, "Failed to convert body to integer")
+			fmt.Print(res)
+			break
 		}
-	}()
+	}
 
-	fmt.Println("Successfully connected to our RabbitMQ instance")
-	fmt.Println(" [*] - waiting for messages")
-	<-forever
+	return
 }

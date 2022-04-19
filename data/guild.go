@@ -93,11 +93,9 @@ func GetGuild(id int) (*Guild, error) {
 	return guildList[pos], err
 }
 
-func AddRosterInfo(id int, c *Character) {
+func AddRosterInfo(c *Character) {
 	for i, g := range guildList {
-		if g.GuildOwner == id {
-			g.Roster = append(g.Roster, *c)
-		}
+		g.Roster = append(g.Roster, *c)
 		_ = i
 	}
 

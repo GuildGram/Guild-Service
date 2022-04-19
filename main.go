@@ -14,7 +14,6 @@ import (
 )
 
 func main() {
-	handlers.StartMsgBrokerConnection()
 
 	//old code
 	l := log.New(os.Stdout, "guild-api", log.LstdFlags)

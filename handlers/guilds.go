@@ -43,6 +43,8 @@ func (c *Guild) UpdateGuild(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Guild) GetGuilds(rw http.ResponseWriter, h *http.Request) {
+
+	StartMsgBrokerConnection(1)
 	c.l.Println("HANDLE GET GUILDS")
 	listChars := data.GetGuilds()
 	err := listChars.ToJSON(rw)
