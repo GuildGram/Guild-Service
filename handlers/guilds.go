@@ -27,7 +27,7 @@ func (c *Guild) AddCharToRoster(rw http.ResponseWriter, r *http.Request) {
 	//initialize message broker connection
 	char, err := ReqCharacterByID(id)
 	if err != nil {
-		log.Printf("unable to receive char info", err)
+		log.Print("unable to receive char info", err)
 		return
 	}
 	data.AddRosterInfo(char)
