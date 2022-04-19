@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"strconv"
 
@@ -17,7 +16,8 @@ func failOnError(err error, msg string) {
 	}
 }
 
-func StartMsgBrokerConnection(n int) (res *data.Character, err error) {
+//initialize message broker connection
+func ReqCharacterByID(n int) (res *data.Character, err error) {
 
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
@@ -61,18 +61,14 @@ func StartMsgBrokerConnection(n int) (res *data.Character, err error) {
 			Body:          []byte(strconv.Itoa(n)),
 		})
 	failOnError(err, "Failed to publish a message")
-
 	for d := range msgs {
 		if corrId == d.CorrelationId {
 
-			var res data.Character
 			err = json.Unmarshal(d.Body, &res)
-			data.AddRosterInfo(&res)
 			failOnError(err, "Failed to convert body to integer")
-			fmt.Print(res)
 			break
 		}
 	}
 
-	return
+	return res, nil
 }

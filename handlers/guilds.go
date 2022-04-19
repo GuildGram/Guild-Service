@@ -17,6 +17,22 @@ func NewGuild(l *log.Logger) *Guild {
 	return &Guild{l}
 }
 
+func (c *Guild) AddCharToRoster(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(rw, "Unable to convert ID", http.StatusBadRequest)
+		return
+	}
+	//initialize message broker connection
+	char, err := ReqCharacterByID(id)
+	if err != nil {
+		log.Printf("unable to receive char info", err)
+		return
+	}
+	data.AddRosterInfo(char)
+}
+
 func (c *Guild) UpdateGuild(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -43,8 +59,6 @@ func (c *Guild) UpdateGuild(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Guild) GetGuilds(rw http.ResponseWriter, h *http.Request) {
-
-	StartMsgBrokerConnection(1)
 	c.l.Println("HANDLE GET GUILDS")
 	listChars := data.GetGuilds()
 	err := listChars.ToJSON(rw)

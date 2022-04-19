@@ -14,7 +14,6 @@ import (
 )
 
 func main() {
-
 	//old code
 	l := log.New(os.Stdout, "guild-api", log.LstdFlags)
 
@@ -25,6 +24,7 @@ func main() {
 	//handle get
 	getRouter := sm.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/guilds/getall", ch.GetGuilds)
+	getRouter.HandleFunc("/guilds/addchar{id:[0-9]+}", ch.AddCharToRoster)
 
 	//should change to get by name for when user services are implemented
 	getRouter.HandleFunc("/guilds/get{id:[0-9]+}", ch.GetGuild)

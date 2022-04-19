@@ -98,7 +98,7 @@ func AddRosterInfo(c *Character) {
 		g.Roster = append(g.Roster, *c)
 		_ = i
 	}
-
+	println(guildList)
 }
 
 var guildList = []*Guild{
