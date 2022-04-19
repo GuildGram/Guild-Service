@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 )
 
 type Guild struct {
@@ -97,8 +98,8 @@ func AddRosterInfo(c *Character) {
 	for i, g := range guildList {
 		g.Roster = append(g.Roster, *c)
 		_ = i
+		log.Print(g.Roster)
 	}
-	println(guildList)
 }
 
 var guildList = []*Guild{
