@@ -19,18 +19,18 @@ func NewGuild(l *log.Logger) *Guild {
 
 func (c *Guild) AddCharToRoster(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		http.Error(rw, "Unable to convert ID", http.StatusBadRequest)
-		return
-	}
+	key := vars["id"]
+	gId := ("G" + key)
+
+	c.l.Println("HANDLE MESSAGE BROKER REQUEST CHARS GUILD")
+
 	//initialize message broker connection
-	char, err := ReqCharacterByID(id)
+	char, err := ReqCharactersByGID(gId)
 	if err != nil {
 		log.Print("unable to receive char info", err)
 		return
 	}
-	data.AddRosterInfo(char)
+	data.AddMultipleRosterInfo(char)
 }
 
 func (c *Guild) UpdateGuild(rw http.ResponseWriter, r *http.Request) {
@@ -70,13 +70,13 @@ func (c *Guild) GetGuilds(rw http.ResponseWriter, h *http.Request) {
 func (c *Guild) AddGuild(rw http.ResponseWriter, r *http.Request) {
 	c.l.Println("HANDLE POST GUILD")
 
-	char := &data.Guild{}
-	err := char.FromJSON(r.Body)
+	guild := &data.Guild{}
+	err := guild.FromJSON(r.Body)
 	if err != nil {
 		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
 	}
 
-	data.AddGuild(char)
+	data.AddGuild(guild)
 }
 
 func (c *Guild) DeleteGuild(rw http.ResponseWriter, r *http.Request) {

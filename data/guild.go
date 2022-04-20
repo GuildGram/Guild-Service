@@ -4,16 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 )
 
 type Guild struct {
-	OwnerID     int         `json:"userid"`
-	GuildID     string      `json:"guildid"`
-	GuildOwner  int         `json:"guildowner"`
-	Roster      []Character `json:"roster"`
-	Bio         string      `json:"bio"`
-	Progression string      `json:"progression"`
+	OwnerID      int         `json:"userid"`
+	GuildID      string      `json:"guildid"`
+	GuildOwnerID int         `json:"guildowner"`
+	Roster       []Character `json:"roster"`
+	Bio          string      `json:"bio"`
+	Progression  string      `json:"progression"`
 }
 
 type Character struct {
@@ -24,7 +23,7 @@ type Character struct {
 	CharacterLevel   int    `json:"characterlevel"`
 	RosterLevel      int    `json:"rosterLevel"`
 	Ilvl             int    `json:"ilvl"`
-	GuildName        string `json:"guildName"`
+	GuildID          string `json:"guildid"`
 	GuildRole        string `json:"guildRole"`
 }
 
@@ -50,7 +49,7 @@ func GetGuilds() Guilds {
 }
 
 func UpdateGuild(id int, c *Guild) error {
-	_, pos, err := findChar(id)
+	_, pos, err := findGuild(id)
 	if err != nil {
 		return err
 	}
@@ -62,7 +61,7 @@ func UpdateGuild(id int, c *Guild) error {
 
 var ErrCharNotFound = fmt.Errorf("char Not found")
 
-func findChar(id int) (*Guild, int, error) {
+func findGuild(id int) (*Guild, int, error) {
 	for i, c := range guildList {
 		if c.OwnerID == id {
 			return c, i, nil
@@ -76,7 +75,7 @@ func AddGuild(c *Guild) {
 }
 
 func DeleteGuild(id int) error {
-	_, pos, err := findChar(id)
+	_, pos, err := findGuild(id)
 	if err != nil {
 		return err
 	}
@@ -87,40 +86,35 @@ func DeleteGuild(id int) error {
 }
 
 func GetGuild(id int) (*Guild, error) {
-	_, pos, err := findChar(id)
+	_, pos, err := findGuild(id)
 	if err != nil {
 		return nil, err
 	}
 	return guildList[pos], err
 }
 
-func AddRosterInfo(c *Character) {
-	for i, g := range guildList {
-		g.Roster = append(g.Roster, *c)
-		_ = i
-		log.Print(g.Roster)
+func AddRosterInfo(c Character) {
+	//in a database
+	for _, g := range guildList {
+		if g.GuildID == c.GuildID {
+			g.Roster = append(g.Roster, c)
+		}
+	}
+}
+
+func AddMultipleRosterInfo(c []Character) {
+	for _, char := range c {
+		AddRosterInfo(char)
 	}
 }
 
 var guildList = []*Guild{
-	&Guild{
-		OwnerID:    1,
-		GuildID:    "G1",
-		GuildOwner: 1,
-		Roster: []Character{
-			Character{
-				UserID:           1,
-				CharaterName:     "Nemoi",
-				Class:            "Striker",
-				RegionServerName: "EUC-Sceptrum",
-				CharacterLevel:   53,
-				RosterLevel:      68,
-				Ilvl:             1355,
-				GuildName:        "FontysICT",
-				GuildRole:        "Owner",
-			},
-		},
-		Bio:         "lorem ipsum dolores",
-		Progression: "ABC:1",
+	{
+		OwnerID:      1,
+		GuildID:      "G1",
+		GuildOwnerID: 1,
+		Roster:       []Character{},
+		Bio:          "lorem ipsum dolores",
+		Progression:  "ABC:1",
 	},
 }

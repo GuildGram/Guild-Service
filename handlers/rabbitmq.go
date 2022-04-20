@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"log"
-	"strconv"
 
 	"github.com/GuildGram/Character-Service.git/data"
 	"github.com/streadway/amqp"
@@ -17,7 +16,7 @@ func failOnError(err error, msg string) {
 }
 
 //initialize message broker connection
-func ReqCharacterByID(n int) (res *data.Character, err error) {
+func ReqCharactersByGID(gId string) (res []data.Character, err error) {
 
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
@@ -58,14 +57,14 @@ func ReqCharacterByID(n int) (res *data.Character, err error) {
 			ContentType:   "text/plain",
 			CorrelationId: corrId,
 			ReplyTo:       q.Name,
-			Body:          []byte(strconv.Itoa(n)),
+			Body:          []byte(gId),
 		})
 	failOnError(err, "Failed to publish a message")
 	for d := range msgs {
 		if corrId == d.CorrelationId {
 
 			err = json.Unmarshal(d.Body, &res)
-			failOnError(err, "Failed to convert body to integer")
+			failOnError(err, "Failed to convert body to json")
 			break
 		}
 	}
