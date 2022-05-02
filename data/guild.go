@@ -7,12 +7,11 @@ import (
 )
 
 type Guild struct {
-	OwnerID      int         `json:"userid"`
-	GuildID      string      `json:"guildid"`
-	GuildOwnerID int         `json:"guildowner"`
-	Roster       []Character `json:"roster"`
-	Bio          string      `json:"bio"`
-	Progression  string      `json:"progression"`
+	OwnerID     int         `json:"userid"`
+	GuildID     string      `json:"guildid"`
+	Roster      []Character `json:"roster"`
+	Bio         string      `json:"bio"`
+	Progression string      `json:"progression"`
 }
 
 type Character struct {
@@ -110,11 +109,10 @@ func AddMultipleRosterInfo(c []Character) {
 
 var guildList = []*Guild{
 	{
-		OwnerID:      1,
-		GuildID:      "G1",
-		GuildOwnerID: 1,
-		Roster:       []Character{},
-		Bio:          "lorem ipsum dolores",
-		Progression:  "ABC:1",
+		OwnerID:     1,
+		GuildID:     "G1",
+		Roster:      []Character{},
+		Bio:         "lorem ipsum dolores",
+		Progression: "ABC:1",
 	},
 }
