@@ -18,19 +18,16 @@ func NewGuild(l *log.Logger) *Guild {
 }
 
 func (c *Guild) AddCharToRoster(rw http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	key := vars["id"]
-	gId := ("G" + key)
-
 	c.l.Println("HANDLE MESSAGE BROKER REQUEST CHARS GUILD")
 
 	//initialize message broker connection
-	char, err := ReqCharactersByGID(gId)
+	char, err := ReqCharactersByGID()
 	if err != nil {
 		log.Print("unable to receive char info", err)
 		return
 	}
 	data.AddMultipleRosterInfo(char)
+
 }
 
 func (c *Guild) UpdateGuild(rw http.ResponseWriter, r *http.Request) {
