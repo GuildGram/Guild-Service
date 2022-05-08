@@ -26,6 +26,7 @@ func main() {
 	getRouter := router.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/guilds/getall", ch.GetGuilds)
 	getRouter.HandleFunc("/guilds/addchars", ch.AddCharToRoster)
+	getRouter.HandleFunc("/guilds/getroster{id:[0-9]+}", ch.GetRoster)
 
 	//should change to get by name for when user services are implemented
 	getRouter.HandleFunc("/guilds/get{id:[0-9]+}", ch.GetGuild)

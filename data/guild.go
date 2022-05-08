@@ -26,12 +26,18 @@ type Character struct {
 	GuildRole        string `json:"guildRole"`
 }
 
+type Guilds []*Guild
+type Characters []Character
+
+func (c *Characters) ToJSON(w io.Writer) error {
+	e := json.NewEncoder(w)
+	return e.Encode(c)
+}
+
 func (c *Guild) FromJSON(r io.Reader) error {
 	e := json.NewDecoder(r)
 	return e.Decode(c)
 }
-
-type Guilds []*Guild
 
 func (c *Guild) ToJSON(w io.Writer) error {
 	e := json.NewEncoder(w)
@@ -59,6 +65,15 @@ func UpdateGuild(id int, c *Guild) error {
 }
 
 var ErrCharNotFound = fmt.Errorf("char Not found")
+
+func GetRoster(id int) (Characters, error) {
+	g, err := GetGuild(id)
+	if err != nil {
+		return nil, err
+	}
+	//print(g.Roster[0].CharaterName + "/n" + g.Roster[1].CharaterName)
+	return g.Roster, nil
+}
 
 func findGuild(id int) (*Guild, int, error) {
 	for i, c := range guildList {
@@ -96,7 +111,9 @@ func AddRosterInfo(c Character) {
 	//in a database
 	for _, g := range guildList {
 		if g.GuildID == c.GuildID {
-			g.Roster = append(g.Roster, c)
+			if CheckRoster(c, g) {
+				g.Roster = append(g.Roster, c)
+			}
 		}
 	}
 }
@@ -105,6 +122,15 @@ func AddMultipleRosterInfo(c []Character) {
 	for _, char := range c {
 		AddRosterInfo(char)
 	}
+}
+
+func CheckRoster(check Character, g *Guild) bool {
+	for _, g := range g.Roster {
+		if g.UserID == check.UserID {
+			return false
+		}
+	}
+	return true
 }
 
 var guildList = []*Guild{

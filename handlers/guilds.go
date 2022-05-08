@@ -27,7 +27,23 @@ func (c *Guild) AddCharToRoster(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data.AddMultipleRosterInfo(char)
+}
 
+func (c *Guild) GetRoster(rw http.ResponseWriter, r *http.Request) {
+	c.l.Println("HANDLE GET ROSTER FROM GUILD")
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		print("could not convert id to int")
+	}
+
+	//initialize message broker connection
+	char, err := data.GetRoster(id)
+	if err != nil {
+		http.Error(rw, "Unable to Marshal Json", http.StatusInternalServerError)
+	}
+	char.ToJSON(rw)
 }
 
 func (c *Guild) UpdateGuild(rw http.ResponseWriter, r *http.Request) {
