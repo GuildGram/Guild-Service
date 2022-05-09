@@ -18,12 +18,12 @@ type Character struct {
 	UserID           int    `json:"userid"`
 	Class            string `json:"class"`
 	CharaterName     string `json:"name"`
-	RegionServerName string `json:"region-server"`
+	RegionServerName string `json:"regionserver"`
 	CharacterLevel   int    `json:"characterlevel"`
 	RosterLevel      int    `json:"rosterLevel"`
 	Ilvl             int    `json:"ilvl"`
 	GuildID          string `json:"guildid"`
-	GuildRole        string `json:"guildRole"`
+	GuildRole        string `json:"guildrole"`
 }
 
 type Guilds []*Guild
@@ -54,7 +54,7 @@ func GetGuilds() Guilds {
 }
 
 func UpdateGuild(id int, c *Guild) error {
-	_, pos, err := findGuild(id)
+	_, pos, err := findGuilByOwner(id)
 	if err != nil {
 		return err
 	}
@@ -66,7 +66,7 @@ func UpdateGuild(id int, c *Guild) error {
 
 var ErrCharNotFound = fmt.Errorf("char Not found")
 
-func GetRoster(id int) (Characters, error) {
+func GetRoster(id string) (Characters, error) {
 	g, err := GetGuild(id)
 	if err != nil {
 		return nil, err
@@ -75,9 +75,18 @@ func GetRoster(id int) (Characters, error) {
 	return g.Roster, nil
 }
 
-func findGuild(id int) (*Guild, int, error) {
+func findGuilByOwner(id int) (*Guild, int, error) {
 	for i, c := range guildList {
 		if c.OwnerID == id {
+			return c, i, nil
+		}
+	}
+	return nil, -1, ErrCharNotFound
+}
+
+func findGuildById(id string) (*Guild, int, error) {
+	for i, c := range guildList {
+		if c.GuildID == ("G" + id) {
 			return c, i, nil
 		}
 	}
@@ -89,7 +98,7 @@ func AddGuild(c *Guild) {
 }
 
 func DeleteGuild(id int) error {
-	_, pos, err := findGuild(id)
+	_, pos, err := findGuilByOwner(id)
 	if err != nil {
 		return err
 	}
@@ -99,8 +108,8 @@ func DeleteGuild(id int) error {
 	return err
 }
 
-func GetGuild(id int) (*Guild, error) {
-	_, pos, err := findGuild(id)
+func GetGuild(id string) (*Guild, error) {
+	_, pos, err := findGuildById(id)
 	if err != nil {
 		return nil, err
 	}
@@ -118,9 +127,11 @@ func AddRosterInfo(c Character) {
 	}
 }
 
-func AddMultipleRosterInfo(c []Character) {
-	for _, char := range c {
-		AddRosterInfo(char)
+func ReplaceRoster(c []Character) {
+	for _, g := range guildList {
+		if g.GuildID == c[0].GuildID {
+			g.Roster = c
+		}
 	}
 }
 
@@ -140,5 +151,12 @@ var guildList = []*Guild{
 		Roster:      []Character{},
 		Bio:         "lorem ipsum dolores",
 		Progression: "ABC:1",
+	},
+	{
+		OwnerID:     2,
+		GuildID:     "G2",
+		Roster:      []Character{},
+		Bio:         "dolores ipsum lorem",
+		Progression: "ABC:5",
 	},
 }

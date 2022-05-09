@@ -26,15 +26,15 @@ func (c *Guild) AddCharToRoster(rw http.ResponseWriter, r *http.Request) {
 		log.Print("unable to receive char info", err)
 		return
 	}
-	data.AddMultipleRosterInfo(char)
+	data.ReplaceRoster(char)
 }
 
 func (c *Guild) GetRoster(rw http.ResponseWriter, r *http.Request) {
 	c.l.Println("HANDLE GET ROSTER FROM GUILD")
 
 	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
+	id := vars["id"]
+	if id == "" {
 		print("could not convert id to int")
 	}
 
@@ -110,9 +110,9 @@ func (c *Guild) DeleteGuild(rw http.ResponseWriter, r *http.Request) {
 
 func (c *Guild) GetGuild(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		http.Error(rw, "Unable to convert ID", http.StatusBadRequest)
+	id := vars["id"]
+	if id == "" {
+		http.Error(rw, "Unable to retrieve ID", http.StatusBadRequest)
 		return
 	}
 
