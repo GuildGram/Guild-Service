@@ -7,7 +7,7 @@ import (
 )
 
 type Guild struct {
-	OwnerID     int         `json:"userid"`
+	OwnerID     string      `json:"userid"`
 	GuildID     string      `json:"guildid"`
 	Roster      []Character `json:"roster"`
 	Bio         string      `json:"bio"`
@@ -15,13 +15,13 @@ type Guild struct {
 }
 
 type Character struct {
-	UserID           int    `json:"userid"`
+	UserID           string `json:"userid"`
 	Class            string `json:"class"`
 	CharaterName     string `json:"name"`
 	RegionServerName string `json:"regionserver"`
-	CharacterLevel   int    `json:"characterlevel"`
-	RosterLevel      int    `json:"rosterLevel"`
-	Ilvl             int    `json:"ilvl"`
+	CharacterLevel   string `json:"characterlevel"`
+	RosterLevel      string `json:"rosterlevel"`
+	Ilvl             string `json:"ilvl"`
 	GuildID          string `json:"guildid"`
 	GuildRole        string `json:"guildrole"`
 }
@@ -53,7 +53,7 @@ func GetGuilds() Guilds {
 	return guildList
 }
 
-func UpdateGuild(id int, c *Guild) error {
+func UpdateGuild(id string, c *Guild) error {
 	_, pos, err := findGuilByOwner(id)
 	if err != nil {
 		return err
@@ -75,7 +75,7 @@ func GetRoster(id string) (Characters, error) {
 	return g.Roster, nil
 }
 
-func findGuilByOwner(id int) (*Guild, int, error) {
+func findGuilByOwner(id string) (*Guild, int, error) {
 	for i, c := range guildList {
 		if c.OwnerID == id {
 			return c, i, nil
@@ -97,7 +97,7 @@ func AddGuild(c *Guild) {
 	guildList = append(guildList, c)
 }
 
-func DeleteGuild(id int) error {
+func DeleteGuild(id string) error {
 	_, pos, err := findGuilByOwner(id)
 	if err != nil {
 		return err
@@ -146,14 +146,14 @@ func CheckRoster(check Character, g *Guild) bool {
 
 var guildList = []*Guild{
 	{
-		OwnerID:     1,
+		OwnerID:     "1",
 		GuildID:     "G1",
 		Roster:      []Character{},
 		Bio:         "lorem ipsum dolores",
 		Progression: "ABC:1",
 	},
 	{
-		OwnerID:     2,
+		OwnerID:     "2",
 		GuildID:     "G2",
 		Roster:      []Character{},
 		Bio:         "dolores ipsum lorem",

@@ -3,7 +3,6 @@ package handlers
 import (
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/GuildGram/Character-Service.git/data"
 	"github.com/gorilla/mux"
@@ -48,16 +47,12 @@ func (c *Guild) GetRoster(rw http.ResponseWriter, r *http.Request) {
 
 func (c *Guild) UpdateGuild(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		http.Error(rw, "Unable to convert ID", http.StatusBadRequest)
-		return
-	}
+	id := vars["id"]
 
 	c.l.Println("HANDLE PUT GUILD", id)
 
 	char := &data.Guild{}
-	err = char.FromJSON(r.Body)
+	err := char.FromJSON(r.Body)
 	if err != nil {
 		http.Error(rw, "Unable to unmarshal json", http.StatusBadRequest)
 	}
@@ -94,15 +89,11 @@ func (c *Guild) AddGuild(rw http.ResponseWriter, r *http.Request) {
 
 func (c *Guild) DeleteGuild(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		http.Error(rw, "Unable to convert ID", http.StatusBadRequest)
-		return
-	}
+	id := vars["id"]
 
 	c.l.Println("HANDLE DELETE GUILD", id)
 
-	err = data.DeleteGuild(id)
+	err := data.DeleteGuild(id)
 	if err != nil {
 		http.Error(rw, "Char not found", http.StatusInternalServerError)
 	}
