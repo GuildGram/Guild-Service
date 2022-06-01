@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: guild-svc
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 91
+    targetPort: 9091
+  selector:
+    name: go-web-app

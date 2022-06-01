@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: guild-svc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: guild-svc
+  template:
+    metadata:
+      labels:
+        name: guild-svc
+    spec:
+      containers:
+      - name: application
+        image: 425409/guildservice:main
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 9091
