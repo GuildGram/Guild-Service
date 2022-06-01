@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: guild-svc
+  name: guild-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: guild-svc
+      name: guild
   template:
     metadata:
       labels:
-        name: guild-svc
+        name: guild
     spec:
       containers:
-      - name: application
+      - name: guild
         image: 425409/guildservice:main
         imagePullPolicy: IfNotPresent
         ports:
