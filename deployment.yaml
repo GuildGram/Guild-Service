@@ -6,15 +6,12 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      name: guild
+      app: guild
   template:
     metadata:
       labels:
-        name: guild
+        app: guild
     spec:
       containers:
-      - name: guild
-        image: 425409/guildservice:main
-        imagePullPolicy: IfNotPresent
-        ports:
-          - containerPort: 9091
+        - name: guild
+          image: 425409/guildservice:main
