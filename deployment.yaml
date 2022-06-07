@@ -14,4 +14,17 @@ spec:
     spec:
       containers:
         - name: guild
-          image: 425409/guildservice:main
+          image: <IMAGE>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: guild-svc
+spec:
+  selector:
+    app: guild
+  ports:
+    - name: guild
+      protocol: TCP
+      port: 9091
+      targetPort: 9091
