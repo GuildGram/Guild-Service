@@ -18,7 +18,7 @@ func failOnError(err error, msg string) {
 //initialize message broker connection
 func ReqCharactersByGID() (res []data.Character, err error) {
 	//connect to rabbit mq server
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
