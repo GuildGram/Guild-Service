@@ -1,3 +1,5 @@
+name: CD - DigitalOcean Cluster & Container Registry 
+
 on:
   push:
     branches: [ main, development ]
